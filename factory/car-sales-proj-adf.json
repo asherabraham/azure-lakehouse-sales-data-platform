@@ -1,0 +1,9 @@
+{
+	"name": "car-sales-proj-adf",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5b92b737-6fc1-4c6f-8e46-fb14db53f76f",
+		"tenantId": "43d81bcd-4cb2-4656-86ac-b4727ae63e5d"
+	}
+}

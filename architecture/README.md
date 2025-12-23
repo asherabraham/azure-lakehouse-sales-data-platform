@@ -15,7 +15,7 @@ The architecture is designed to be:
 
 ## High-Level Architecture Diagram
 
-![Azure Lakehouse Architecture](./architecture/azure_lakehouse_architecture.png)
+![Azure Lakehouse Architecture](azure_lakehouse_architecture.png)
 
 ---
 
@@ -125,6 +125,4 @@ This project reflects **real-world Azure Data Engineering practices** and demons
 - Cloud-native governance
 - Performance-aware transformations
 
----
 
-## Folder Reference

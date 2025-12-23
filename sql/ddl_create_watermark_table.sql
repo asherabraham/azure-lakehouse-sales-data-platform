@@ -9,6 +9,10 @@ from the source_car_data table.
         last_load VARCHAR(20) NULL
 );
 
+ -- Initial watermark seed value
+ INSERT INTO dbo.watermark (last_load)
+ VALUES ('DT00000');
+
 -- Notes:
 -- 1. last_load is stored as VARCHAR to align with source Date_ID datatype.
 -- 2. This table maintains state for incremental ADF pipelines.

@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "car-sales-proj-adf"
+		},
+		"dl_databricks_accessToken": {
+			"value": ""
+		},
+		"ls_adsl2_accountKey": {
+			"value": ""
+		},
+		"ls_sql_db_password": {
+			"value": ""
+		},
+		"ls_adsl2_properties_typeProperties_url": {
+			"value": "https://carsalesproject23.dfs.core.windows.net/"
+		},
+		"ls_github_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/"
+		},
+		"ls_sql_db_properties_typeProperties_server": {
+			"value": "car-sales-server.database.windows.net"
+		},
+		"ls_sql_db_properties_typeProperties_database": {
+			"value": "car_sales_db"
+		},
+		"ls_sql_db_properties_typeProperties_userName": {
+			"value": "carsales"
+		}
+	}
+}

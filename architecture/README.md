@@ -1,14 +1,15 @@
 # Azure Data Engineering Project – Architecture
 
 ## Overview
-This project implements an **end-to-end Azure Data Engineering Lakehouse** using the **Medallion Architecture (Bronze–Silver–Gold)**.  
-It demonstrates how raw transactional data is ingested, transformed incrementally, governed, and finally modeled into analytics-ready datasets using modern Azure services.
+This project implements an **end-to-end Azure Data Engineering Lakehouse** using the **Medallion Architecture (Bronze–Silver–Gold)**.
 
-The architecture is designed to be:
+It demonstrates how raw transactional data is ingested safely and incrementally, refined using Spark-based processing, governed using Unity Catalog, and finally modeled into analytics-ready datasets.
+
+The architecture is intentionally designed to be:
 - Production-aligned
-- Incremental (CDC-based)
-- Scalable
-- Governed using Unity Catalog
+- Incremental and idempotent
+- Retry-safe and failure-aware
+- Governed and auditable
 - Suitable for interview and portfolio showcase
 
 ---
@@ -16,6 +17,18 @@ The architecture is designed to be:
 ## High-Level Architecture Diagram
 
 ![Azure Lakehouse Architecture](azure_lakehouse_architecture.png)
+
+---
+
+## Azure Data Factory – Bronze Ingestion Pipeline
+
+![ADF Bronze Ingestion Pipeline](adf-pipeline.png)
+
+This pipeline demonstrates:
+- Watermark-driven incremental ingestion
+- Run-based idempotent Bronze writes
+- Explicit run lifecycle tracking (STARTED / SUCCESS / FAILED)
+- Safe retry handling without data corruption
 
 ---
 
@@ -31,11 +44,11 @@ The architecture is designed to be:
 
 ### 2. Ingestion & Orchestration
 - **Azure Data Factory (ADF)**
-  - Orchestrates data movement
+  - Orchestrates data movement and execution flow
   - Handles **initial load** and **incremental loads**
-  - Uses parameterized pipelines
-  - Implements watermark-based CDC logic
-  - Loads data into the Bronze layer
+  - Uses **watermark-based CDC logic**
+  - Implements **run-level audit logging**
+  - Writes data to Bronze using **run-based isolation** to ensure idempotency
 
 ---
 
@@ -43,17 +56,19 @@ The architecture is designed to be:
 Data is stored in Azure Data Lake Storage Gen2, organized using the Medallion pattern:
 
 #### 🥉 Bronze Layer
-- Raw, append-only data
+- Raw, immutable, append-only data
 - Incrementally ingested from Azure SQL
 - Stored in **Parquet** format
+- **Run-isolated folder structure (`run_id=...`)**
 - No business transformations
 
 #### 🥈 Silver Layer
 - Cleaned and standardized data
-- Data type corrections
-- Deduplication
-- Business rules applied
-- Managed using **Delta Lake**
+- Deduplication and business rules applied
+- Incremental processing based on **successful Bronze runs**
+- Stored in **Parquet** format
+- Append-based, non-mutating design
+- Designed for deterministic reprocessing
 
 #### 🥇 Gold Layer
 - Analytics-ready datasets
@@ -62,16 +77,17 @@ Data is stored in Azure Data Lake Storage Gen2, organized using the Medallion pa
   - Dimension tables
 - Handles **Slowly Changing Dimensions (SCD Type 1)**
 - Optimized for BI consumption
+- Implemented using **Delta Lake**
 
 ---
 
 ### 4. Processing Layer
 - **Azure Databricks**
   - Spark-based transformations
-  - Delta Lake operations
-  - Incremental MERGE logic
+  - Incremental processing logic
   - Surrogate key generation
   - Fact–dimension modeling
+  - Gold-layer MERGE operations using Delta Lake
 
 ---
 
@@ -96,10 +112,13 @@ Data is stored in Azure Data Lake Storage Gen2, organized using the Medallion pa
 1. CSV data hosted on GitHub
 2. Loaded into Azure SQL Database (source preparation)
 3. Azure Data Factory:
-   - Detects new data using watermarks
-   - Loads incremental data into Bronze layer
+   - Reads last successful watermark
+   - Ingests incremental data
+   - Writes to run-isolated Bronze paths
+   - Logs run status and updates watermark only on success
 4. Azure Databricks:
-   - Transforms Bronze → Silver
+   - Processes only successful Bronze runs
+   - Transforms Bronze → Silver (append-based)
    - Models Silver → Gold (Star Schema)
 5. Unity Catalog enforces governance
 6. Gold layer consumed by BI tools
@@ -108,21 +127,24 @@ Data is stored in Azure Data Lake Storage Gen2, organized using the Medallion pa
 
 ## Key Design Highlights
 
-- Parameterized ADF pipelines (production-ready)
-- Incremental loading using watermark tables
-- Delta Lake for ACID compliance and time travel
+- Parameterized ADF pipelines
+- Watermark-based incremental ingestion
+- Run-based idempotent Bronze design
+- Retry-safe orchestration with explicit run tracking
+- Append-based Silver layer using Parquet
+- Delta Lake for Gold-layer ACID guarantees
 - Star schema modeling using Spark
 - Unity Catalog for enterprise-grade governance
-- Clear separation of raw, refined, and curated data
 
 ---
 
 ## Why This Architecture Matters
-This project reflects **real-world Azure Data Engineering practices** and demonstrates skills expected from a mid-level to senior Data Engineer, including:
-- Lakehouse design
-- Incremental ingestion
-- Data modeling
-- Cloud-native governance
-- Performance-aware transformations
 
+This project reflects **real-world Azure Data Engineering practices** and demonstrates capabilities expected from a **mid-level to senior Data Engineer**, including:
 
+- Lakehouse architecture design
+- Incremental and idempotent ingestion
+- Orchestration with operational state management
+- Deterministic data processing
+- Dimensional data modeling
+- Cloud-native governance and scalability

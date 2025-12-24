@@ -16,7 +16,7 @@
 			"location": {
 				"type": "HttpServerLocation",
 				"relativeUrl": {
-					"value": "/anshlambagit/Azure-DE-Project-Resources/refs/heads/main/Raw%20Data/@{dataset().load_flag}",
+					"value": "/asherabraham/azure-lakehouse-sales-data-platform/refs/heads/main/data/initial/@{dataset().load_flag}",
 					"type": "Expression"
 				}
 			},

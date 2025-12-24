@@ -191,7 +191,7 @@
 						"referenceName": "ds_git_sales_csv",
 						"type": "DatasetReference",
 						"parameters": {
-							"load_flag": "IncrementalSales.csv"
+							"load_flag": "SalesData.csv"
 						}
 					}
 				],
